@@ -1,21 +1,20 @@
-VyomXpress Backend API & Discord Bot 
+# VyomXpress Backend API & Discord Bot
+
 This project is a comprehensive backend solution built with Node.js that integrates a structured RESTful API with an interactive Discord Bot. It leverages Sequelize as the ORM to manage a cloud-hosted MySQL database on Aiven.
 
-🛠️ Technologies Used
-Runtime Environment: Node.js (v24.14.0)
+## 🛠️ Technologies Used
 
-Web Framework: Express.js
+- **Runtime Environment:** Node.js (v24.14.0)
+- **Web Framework:** Express.js
+- **ORM:** Sequelize
+- **Database:** MySQL (Hosted on Aiven Cloud)
+- **Integration:** Discord.js (v14)
+- **Authentication:** JSON Web Tokens (JWT) & Bcrypt (Password Hashing)
+- **Security:** express-rate-limit (Rate Limiting)
 
-ORM: Sequelize
+## 📁 Project Structure
 
-Database: MySQL (Hosted on Aiven Cloud)
-
-Integration: Discord.js (v14)
-
-Authentication: JSON Web Tokens (JWT) & Bcrypt (Password Hashing)
-
-📁 Project Structure
-Plaintext
+```plaintext
 BackendProject_VyomXpress/
 ├── src/
 │   ├── bot/
@@ -24,9 +23,11 @@ BackendProject_VyomXpress/
 │   ├── config/
 │   │   └── db.js                # Sequelize database connection setup
 │   ├── controllers/
-│   │   └── auth.controller.js   # Authentication logic (signup & login)
+│   │   └── auth.controller.js   # Authentication logic (signup, login & me)
 │   ├── middlewares/
-│   │   └── error.middleware.js  # Global centralized error handler
+│   │   ├── auth.middleware.js   # JWT token verification middleware
+│   │   ├── error.middleware.js  # Global centralized error handler
+│   │   └── rateLimit.middleware.js  # Rate limiting for auth routes
 │   ├── models/
 │   │   ├── index.js             # Model unifier and database synchronizer
 │   │   ├── service.model.js     # Service table schema definition
@@ -38,11 +39,13 @@ BackendProject_VyomXpress/
 ├── .gitignore                   # Files and folders excluded from Git
 ├── package.json                 # Project dependencies and npm scripts
 └── README.md                    # Project documentation
+```
 
-⚙️ Environment Configuration
-To run this project locally, you must create a .env file in the root directory with the following structure (replace placeholder values with actual credentials):
+## ⚙️ Environment Configuration
 
-Code fragment
+To run this project locally, create a `.env` file in the root directory with the following structure:
+
+```env
 PORT=3000
 
 # Database Configuration (Aiven/MySQL)
@@ -58,35 +61,34 @@ JWT_SECRET=your_super_secret_key_phrase
 # Discord Configuration
 DISCORD_CLIENT_ID=your_discord_client_id_here
 DISCORD_TOKEN=your_discord_bot_token_here
-🚀 Installation & Setup
-Clone the repository to your local machine.
+```
 
-Install all required dependencies:
+## 🚀 Installation & Setup
 
-Bash
+1. Clone the repository to your local machine.
+
+2. Install all required dependencies:
+```bash
 npm install
-Start the application server and launch the Discord bot:
+```
 
-Bash
+3. Start the application server and launch the Discord bot:
+```bash
 node src/app.js
-Upon initialization, the console will log database connection confirmation, schema synchronization status, application slash command deployment updates, and successful Discord bot authentication.
+```
 
-🛣️ REST API Endpoints
-Authentication (/api/v1/auth)
-POST /signup: Registers a new user. It checks for username duplicates in the database and automatically hashes passwords using a Sequelize hook before persistence. Returns a signed JWT token.
+Upon initialization, the console will log database connection confirmation, schema synchronization status, slash command deployment updates, and successful Discord bot authentication.
 
-POST /login: Verifies provided user credentials against database records and issues a valid 24-hour JWT token upon successful authentication.
+## 🛣️ REST API Endpoints
 
-GET /me: Returns the authenticated user's profile. Requires Authorization: Bearer <token> header.
+Base URL (production): `https://vyomxpress-backend-xjbx.onrender.com`
 
+### Authentication (`/api/v1/auth`)
 
-🤖 Discord Bot Interaction (Slash Commands)
-/ppcreateuser [username] [password]: Creates and stores a new user record in the MySQL cloud database directly from Discord.
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/signup` | Registers a new user. Validates duplicate usernames, enforces minimum length (username ≥ 3 chars, password ≥ 8 chars), hashes password with bcrypt and returns a signed JWT token. | No |
+| POST | `/login` | Verifies credentials and issues a 24-hour JWT token upon successful authentication. | No |
+| GET | `/me` | Returns the authenticated user's profile (id, username, createdAt). | Yes |
 
-/ppcreateservice [name] [description]: Inserts a new service record into the cloud database.
-
-/ppgetuser [username]: Searches for an existing user in the database and returns public account information.
-
-🔗 Bot Invitation Link
-To invite this bot to your own Discord server for testing, use the following authorization link:
-[Click here to invite VyomXpress-Bot](https://discord.com/oauth2/authorize?client_id=1509938383928168448&permissions=8&integration_type=0&scope=bot+applications.commands)
+### Authentication Header (for protected routes)
