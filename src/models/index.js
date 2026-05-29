@@ -11,7 +11,6 @@ const syncModels = async () => {
     }
 };
 
-// Exportamos de forma directa los objetos que vienen listos de cada archivo
 module.exports = {
     User,
     Service,

@@ -38,6 +38,7 @@ BackendProject_VyomXpress/
 ├── .gitignore                   # Files and folders excluded from Git
 ├── package.json                 # Project dependencies and npm scripts
 └── README.md                    # Project documentation
+
 ⚙️ Environment Configuration
 To run this project locally, you must create a .env file in the root directory with the following structure (replace placeholder values with actual credentials):
 
@@ -76,9 +77,16 @@ POST /signup: Registers a new user. It checks for username duplicates in the dat
 
 POST /login: Verifies provided user credentials against database records and issues a valid 24-hour JWT token upon successful authentication.
 
+GET /me: Returns the authenticated user's profile. Requires Authorization: Bearer <token> header.
+
+
 🤖 Discord Bot Interaction (Slash Commands)
 /ppcreateuser [username] [password]: Creates and stores a new user record in the MySQL cloud database directly from Discord.
 
 /ppcreateservice [name] [description]: Inserts a new service record into the cloud database.
 
 /ppgetuser [username]: Searches for an existing user in the database and returns public account information.
+
+🔗 Bot Invitation Link
+To invite this bot to your own Discord server for testing, use the following authorization link:
+[Click here to invite VyomXpress-Bot](https://discord.com/oauth2/authorize?client_id=1509938383928168448&permissions=8&integration_type=0&scope=bot+applications.commands)

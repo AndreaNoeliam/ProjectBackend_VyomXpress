@@ -1,5 +1,5 @@
 const { Client, GatewayIntentBits } = require('discord.js');
-const { User, Service } = require('../models/index'); // <-- Traemos los modelos unificados
+const { User, Service } = require('../models/index');
 require('dotenv').config();
 
 const client = new Client({
@@ -14,29 +14,48 @@ client.once('clientReady', () => {
     console.log(`🤖 Discord Bot connected successfully as ${client.user.tag}`);
 });
 
-// Manejador de interacciones (Slash Commands)
+// Slash Commands
 client.on('interactionCreate', async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
     const { commandName } = interaction;
 
     try {
-        // 1. Comando /ppcreateuser
+        // 1. /ppcreateuser
         if (commandName === 'ppcreateuser') {
             const username = interaction.options.getString('username');
             const password = interaction.options.getString('password');
 
+            if (password.length < 8) {
+                return await interaction.reply({ 
+                    content: '❌ Password must be at least 8 characters long.', 
+                    ephemeral: true 
+                });
+            }
+            if (username.length < 3) {
+                return await interaction.reply({ 
+                    content: '❌ Username must be at least 3 characters long.', 
+                    ephemeral: true 
+                });
+            }
+            
             const existingUser = await User.findOne({ where: { username } });
             if (existingUser) {
-                return await interaction.reply({ content: `❌ Username **${username}** is already taken.`, ephemeral: true });
+                return await interaction.reply({ 
+                    content: `❌ Username **${username}** is already taken.`, 
+                    ephemeral: true 
+                });
             }
 
-            // Creamos el usuario (el hook de bcrypt actúa automáticamente)
             await User.create({ username, password });
-            return await interaction.reply({ content: `✅ User **${username}** successfully created via Discord!` });
-        }
 
-        // 2. Comando /ppcreateservice
+            return await interaction.reply({ 
+                content: `✅ User **${username}** successfully created via Discord!`, 
+                ephemeral: true 
+            });
+        } // 👈 Este era el que faltaba
+
+        // 2. /ppcreateservice
         if (commandName === 'ppcreateservice') {
             const name = interaction.options.getString('name');
             const description = interaction.options.getString('description') || 'No description provided';
@@ -45,13 +64,16 @@ client.on('interactionCreate', async interaction => {
             return await interaction.reply({ content: `✅ Service **${name}** created successfully!` });
         }
 
-        // 3. Comando /ppgetuser
+        // 3. /ppgetuser
         if (commandName === 'ppgetuser') {
             const username = interaction.options.getString('username');
 
             const user = await User.findOne({ where: { username } });
             if (!user) {
-                return await interaction.reply({ content: `❌ User **${username}** not found in the database.`, ephemeral: true });
+                return await interaction.reply({ 
+                    content: `❌ User **${username}** not found in the database.`, 
+                    ephemeral: true 
+                });
             }
 
             return await interaction.reply({ 
@@ -62,7 +84,10 @@ client.on('interactionCreate', async interaction => {
     } catch (error) {
         console.error(`❌ Error executing command ${commandName}:`, error.message);
         if (!interaction.replied) {
-            await interaction.reply({ content: '❌ There was an error executing this command.', ephemeral: true });
+            await interaction.reply({ 
+                content: '❌ There was an error executing this command.', 
+                ephemeral: true 
+            });
         }
     }
 });

@@ -13,6 +13,14 @@ const signup = async (req, res, next) => {
             return res.status(400).json({ error: 'Username and password are required.' });
         }
 
+        if (password.length < 8) {
+            return res.status(400).json({ error: 'Password must be at least 8 characters long.' });
+        }
+
+        if (username.length < 3) {
+            return res.status(400).json({ error: 'Username must be at least 3 characters long.' });
+        }
+
         // 1. Validate duplicates
         const existingUser = await User.findOne({ where: { username } });
         if (existingUser) {
@@ -77,7 +85,24 @@ const login = async (req, res, next) => {
     }
 };
 
-module.exports = {
-    signup,
-    login
+const getMe = async (req, res, next) => {
+    try {
+        const user = await User.findByPk(req.user.id, {
+            attributes: ['id', 'username', 'createdAt'] 
+        });
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found.' });
+        }
+
+        return res.status(200).json({ user });
+    } catch (error) {
+        next(error);
+    }
 };
+
+module.exports = { 
+    signup, 
+    login, 
+    getMe 
+}; 
