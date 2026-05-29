@@ -9,9 +9,9 @@ const sequelize = new Sequelize(
         host: process.env.DB_HOST,
         port: process.env.DB_PORT || 3306,
         dialect: 'mysql',
-        logging: false, // Para que no llene la consola de consultas SQL SQL
+        logging: false, 
         define: {
-            timestamps: true // Nos crea automáticamente las columnas createdAt y updatedAt
+            timestamps: true
         }
     }
 );
@@ -22,7 +22,7 @@ const connectDB = async () => {
         console.log('📦 Database connected successfully.');
     } catch (error) {
         console.error('❌ Database connection failed:', error.message);
-        process.exit(1); // Corta la ejecución de la app si no se puede conectar
+        process.exit(1); 
     }
 };
 
