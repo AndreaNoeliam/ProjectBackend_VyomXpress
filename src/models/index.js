@@ -2,8 +2,6 @@ const { sequelize } = require('../config/db');
 const User = require('./user.model');
 const Service = require('./service.model');
 
-
-
 const syncModels = async () => {
     try {
         await sequelize.sync({ alter: true });
@@ -13,6 +11,7 @@ const syncModels = async () => {
     }
 };
 
+// Exportamos de forma directa los objetos que vienen listos de cada archivo
 module.exports = {
     User,
     Service,
